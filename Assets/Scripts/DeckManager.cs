@@ -1,7 +1,70 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+
+public enum CardState
+{
+    NOT_USED,
+    IN_DECK,
+    IN_HAND,
+    IN_PLAY,
+    DISCARDED,
+    BANISHED
+}
+
+public static class IListExtensions
+{
+    /// <summary>
+    /// Шафлим List<T>
+    /// </summary>
+    public static void Shuffle<T>(this IList<T> ts)
+    {
+        var count = ts.Count;
+        var last = count - 1;
+        for (var i = 0; i < last; ++i)
+        {
+            var r = UnityEngine.Random.Range(i, count);
+            var tmp = ts[i];
+            ts[i] = ts[r];
+            ts[r] = tmp;
+        }
+    }
+}
+
+public class Card : ICloneable
+{
+    public string Name { get; private set; }
+    public string Desc { get; private set; }
+    public int Health { get; private set; }
+    public int Damage { get; private set; }
+    public Sprite Illustr { get; private set; }
+    public int LightCost { get; private set; }
+    public int DarkCost { get; private set; }
+    public int MateriaCost { get; private set; }
+    public CardState State { get; set; }
+
+    public Card(string name, string desc, int health, int damage, string illSRC, int lc, int dc, int mc)
+    {
+        Name = name;
+        Desc = desc;
+        Health = health;
+        Damage = damage;
+        Illustr = Resources.Load<Sprite>(illSRC);
+        LightCost = lc;
+        DarkCost = dc;
+        MateriaCost = mc;
+        State = CardState.NOT_USED;
+    }
+
+    public object Clone()
+    {       
+        return this.MemberwiseClone();       
+    }
+}
 
 public class Deck
 {
@@ -15,16 +78,18 @@ public class Deck
 
     public void FormDeck(List<Card> AllCards)
     {
-        AddCard(AllCards[0]);
-        AddCard(AllCards[0]);
-        AddCard(AllCards[1]);
-        AddCard(AllCards[2]);
-        AddCard(AllCards[1]);
+        //Здесь формирование колоды должно быть
+        for (int i = 0; i < 30; i++)
+            AddCard((Card)AllCards[UnityEngine.Random.Range(0, AllCards.Count)].Clone());  
+        //Шафлим
+        ShuffleDeck();
     }
 
     public void AddCard(Card newCard)
     {
+        if (newCard == null) return;
         Cards.Add(newCard);
+        Cards[Cards.Count - 1].State = CardState.IN_DECK;
     }
 
     public Card TopDeck()
@@ -35,15 +100,17 @@ public class Deck
         return topdeck;
     }
 
-
-
+    public void ShuffleDeck()
+    {
+        Cards.Shuffle();
+    }
 }
 
-public class DeckManager : MonoBehaviour
+public class DeckManager : MonoBehaviour , IPointerClickHandler
 {
     public Text DeckSizeCounter;
-
-    public Deck GameDeck;
+    public GameObject IPlayer;
+    public Deck GameDeck;    
 
     private void Awake()
     {
@@ -51,10 +118,13 @@ public class DeckManager : MonoBehaviour
     }
 
     public void Update()
-    {
-        //DeckSizeCounter.text = "1";
-        //Debug.Log("Размер колоды " + GameDeck.DeckSize.ToString());
+    {        
         if (DeckSizeCounter != null) DeckSizeCounter.text = GameDeck.DeckSize.ToString();
+    }    
 
+    public void OnPointerClick(PointerEventData eventData)
+    {        
+        Player myPlayer = IPlayer.GetComponent<Player>();
+        myPlayer.DrawCard(GameDeck);
     }
 }

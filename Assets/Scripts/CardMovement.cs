@@ -10,17 +10,24 @@ public class CardMovement : MonoBehaviour , IBeginDragHandler, IEndDragHandler ,
     private Vector3 CardPosition;
     private Vector3 offset;
     public Transform DefaultParent;
-
-    public bool CardPlayed = false;
+    CardState cardState;
 
     public void Awake()
     {
         mainCamera = Camera.allCameras[0];
     }
 
+    public void Update()
+    {
+        Card SelfCard = gameObject.GetComponent<CardInfo>().SelfCard;
+        cardState = SelfCard.State;
+        
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (CardPlayed) return;
+        
+        if (cardState != CardState.IN_HAND) return;
         offset = transform.position - mainCamera.ScreenToWorldPoint(eventData.position);
         DefaultParent = transform.parent;
         transform.SetParent(DefaultParent.parent);
@@ -29,7 +36,7 @@ public class CardMovement : MonoBehaviour , IBeginDragHandler, IEndDragHandler ,
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (CardPlayed) return;
+        if (cardState != CardState.IN_HAND) return;
         CardPosition = mainCamera.ScreenToWorldPoint(eventData.position) + offset;
         CardPosition.z = 0;
         Debug.Log(CardPosition);
@@ -39,15 +46,15 @@ public class CardMovement : MonoBehaviour , IBeginDragHandler, IEndDragHandler ,
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (CardPlayed) return;
+        if (cardState != CardState.IN_HAND) return;
         transform.SetParent(DefaultParent);
         GetComponent<CanvasGroup>().blocksRaycasts = true;
-        if (DefaultParent.gameObject.name == "PlayedCards") CardPlayed = true;
 
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (cardState != CardState.IN_HAND) return;
         Animator anim = gameObject.GetComponent<Animator>();
         anim.SetBool("In", true);
         anim.SetBool("Out", false);
@@ -55,6 +62,7 @@ public class CardMovement : MonoBehaviour , IBeginDragHandler, IEndDragHandler ,
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (cardState != CardState.IN_HAND) return;
         Animator anim = gameObject.GetComponent<Animator>();
         anim.SetBool("In", false);
         anim.SetBool("Out", true);

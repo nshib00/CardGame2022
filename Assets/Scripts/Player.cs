@@ -8,8 +8,7 @@ public class Player : MonoBehaviour
     public Image PlayerArea;
     public GameObject CardPrefab;
     public List<Card> Hand;
-    private int PlayerHealth;
-        
+    public int PlayerHealth { get; private set; }          
 
     public void Awake()
     {
@@ -17,15 +16,26 @@ public class Player : MonoBehaviour
         PlayerHealth = 20;        
     }
 
+    public void GetHand(int n , Deck deck)
+    {
+        for (int i = 0; i < n; i++)
+            DrawCard(deck);
+    }
 
     public void DrawCard(Deck deck)
     {
         Card drawnCard = deck.TopDeck();
         if (drawnCard == null) return;
+        drawnCard.State = CardState.IN_HAND;
         Hand.Add(drawnCard);
         GameObject CardToHand = Instantiate(CardPrefab, PlayerArea.transform, false);
-        CardToHand.GetComponent<CardInfo>().SelfCard = drawnCard;
-        CardToHand.GetComponent<CardInfo>().ShowCardInfo();
+        CardToHand.GetComponent<CardInfo>().FillCardInfo(drawnCard);
+    }
+
+    public bool AttackPlayer(int damage)
+    {
+        PlayerHealth -= damage;
+        return (PlayerHealth > 0);
     }
 
 }

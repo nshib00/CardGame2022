@@ -9,9 +9,22 @@ public class DropZone : MonoBehaviour, IDropHandler
     {
         CardMovement cm = eventData.pointerDrag.GetComponent<CardMovement>();        
         if (cm)
-        {            
-            cm.DefaultParent = gameObject.transform;
-            if (gameObject.name == "Void") cm.GoToVoid();
+        {
+            cm.DefaultParent = gameObject.transform;            
+            switch (gameObject.name)
+            {           
+                case "Void":
+                    eventData.pointerDrag.GetComponent<CardInfo>().SelfCard.State = CardState.BANISHED;
+                    cm.GoToVoid();
+                    break;
+
+                case "PlayedCards":
+                    eventData.pointerDrag.GetComponent<CardInfo>().SelfCard.State = CardState.IN_PLAY;
+                    break;
+
+                default:
+                    break;
+            }    
             
         }
             

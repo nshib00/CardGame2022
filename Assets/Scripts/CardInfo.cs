@@ -27,8 +27,9 @@ public class CardInfo : MonoBehaviour
         trans.localPosition = Vector3.zero;
     }
 
-    public void ShowCardInfo()
-    {        
+    public void FillCardInfo(Card card)
+    {
+        SelfCard = card;
         CardName.text = SelfCard.Name;
         CardDescription.text = SelfCard.Desc;
         CardHealth.text = SelfCard.Health.ToString();
