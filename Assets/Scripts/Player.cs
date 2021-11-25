@@ -8,12 +8,15 @@ public class Player : MonoBehaviour
     public Image PlayerArea;
     public GameObject CardPrefab;
     public List<Card> Hand;
-    public int PlayerHealth { get; private set; }          
+    public int PlayerHealth { get; private set; }
+    public ManaCost Mana { get; set; }
 
     public void Awake()
     {
         Hand = new List<Card>();
-        PlayerHealth = 20;        
+        PlayerHealth = 20;
+        Mana = new ManaCost(1,1,1);
+
     }
 
     public void GetHand(int n , Deck deck)

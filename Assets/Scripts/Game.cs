@@ -16,10 +16,10 @@ public class Game : MonoBehaviour
     /// </summary>
     private void LoadCardGallery()
     {
-        AllCards.Add(new Card("Чемпион", "Несущая свет", 5, 4, "Sprites/Cards/Champ", 2, 0, 2));
-        AllCards.Add(new Card("Белый Дракон", "Дыхание Бога", 7, 2, "Sprites/Cards/WDrag", 4, 0, 3));
-        AllCards.Add(new Card("Имп", "Жар преисподней", 2, 3, "Sprites/Cards/Imp", 0, 1, 1));
-        AllCards.Add(new Card("Маг", "Жаждущий знаний", 1, 5, "Sprites/Cards/Mage", 1, 1, 2));
+        AllCards.Add(new Card("Чемпион", "Несущая свет", 5, 4, "Sprites/Cards/Champ", new ManaCost(2, 2, 0) , new ManaCost (2,1,0)));
+        AllCards.Add(new Card("Белый Дракон", "Дыхание Бога", 7, 2, "Sprites/Cards/WDrag", new ManaCost(4, 3, 0) , new ManaCost(3, 0, 0)));
+        AllCards.Add(new Card("Имп", "Жар преисподней", 2, 3, "Sprites/Cards/Imp", new ManaCost(0, 1, 1) , new ManaCost(0, 0, 2)));
+        AllCards.Add(new Card("Маг", "Жаждущий знаний", 1, 5, "Sprites/Cards/Mage", new ManaCost(1, 2, 1) , new ManaCost(0, 3, 0)));
     }
 
     // Start is called before the first frame update
@@ -36,7 +36,7 @@ public class Game : MonoBehaviour
         Player myPlayer = IPlayer.GetComponent<Player>();
         myDeck.FormDeck(AllCards);
         myPlayer.GetHand(5,myDeck);
-        IEnemy.GetComponent<Enemy>().SetEnemy(40, 5, "Sprites/Cards/Boss_Destroyer");
+        IEnemy.GetComponent<Enemy>().SetEnemy(40, 5, "Sprites/Cards/Boss_Destroyer", "Разрушитель миров", "Воплощение ярости");
 
     }
 }

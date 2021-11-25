@@ -10,20 +10,23 @@ public class CardInfo : MonoBehaviour
     public Text CardHealth;
     public Text CardDamage;
     public Image CardImage;
-    public Image Cost;
+    public Text CardMateria;
+    public Text CardLightCost;
+    public Text CardDarkCost;
+    public Image VoidProfit;
 
     public Card SelfCard;
 
-    private void LoadCost(string src)
+    private void ShowCost(string src , Image ParentImage)
     {
         GameObject NewObj = new GameObject(); 
         Image NewImage = NewObj.AddComponent<Image>(); 
         NewImage.sprite = Resources.Load<Sprite>(src); 
         RectTransform trans = NewImage.GetComponent<RectTransform>();
-        trans.transform.SetParent(Cost.transform); 
+        trans.transform.SetParent(ParentImage.transform); 
         trans.localScale = Vector3.one;
         trans.anchoredPosition = new Vector2(0f, 0f); 
-        trans.sizeDelta = new Vector2(Cost.rectTransform.rect.height - 2, Cost.rectTransform.rect.height - 2);
+        trans.sizeDelta = new Vector2(ParentImage.rectTransform.rect.height - 2, ParentImage.rectTransform.rect.height - 2);
         trans.localPosition = Vector3.zero;
     }
 
@@ -33,12 +36,70 @@ public class CardInfo : MonoBehaviour
         CardName.text = SelfCard.Name;
         CardDescription.text = SelfCard.Desc;
         CardHealth.text = SelfCard.Health.ToString();
-        CardDamage.text = SelfCard.Damage.ToString();
-        Debug.Log(SelfCard.Illustr);
+        CardDamage.text = SelfCard.Damage.ToString();        
         CardImage.sprite = SelfCard.Illustr;
-        for (int i = 0; i < SelfCard.LightCost; i++) LoadCost("Sprites/Interface/Light");
-        for (int i = 0; i < SelfCard.DarkCost; i++) LoadCost("Sprites/Interface/Dark");
-        for (int i = 0; i < SelfCard.MateriaCost; i++) LoadCost("Sprites/Interface/Materia");
+        CardMateria.text = SelfCard.SummonCost.Materia.ToString();
+        CardLightCost.text = SelfCard.SummonCost.Light.ToString();
+        CardDarkCost.text = SelfCard.SummonCost.Dark.ToString();       
+        for (int i = 0; i < SelfCard.VoidProfit.Light; i++) ShowCost("Sprites/Interface/Light", VoidProfit);
+        for (int i = 0; i < SelfCard.VoidProfit.Materia; i++) ShowCost("Sprites/Interface/Materia", VoidProfit);
+        for (int i = 0; i < SelfCard.VoidProfit.Dark; i++) ShowCost("Sprites/Interface/Dark", VoidProfit);
+    }
+
+    public bool BanishToVoid()
+    {
+        Player player = GameObject.Find("Player").GetComponent<Player>();
+        if (player.Mana.Dark == 0) return false;
+        SelfCard.State = CardState.BANISHED;
+        ManaCost mc = player.Mana;
+        mc.Dark--;
+        mc.Light += SelfCard.VoidProfit.Light;
+        mc.Materia += SelfCard.VoidProfit.Materia;
+        mc.Dark += SelfCard.VoidProfit.Dark;
+        player.Mana = mc;
+
+        //Часть с активацией свойств при жертве карты
+
+        Animator anim = GetComponent<Animator>();
+        anim.SetBool("Void", true);
+        Destroy(gameObject, 0.95f);
+        return true;
+    }
+
+    public bool PlayToBattlefield()
+    {
+        Player player = GameObject.Find("Player").GetComponent<Player>();
+        ManaCost mc = player.Mana;
+        if (mc.Light < SelfCard.SummonCost.Light)
+        {
+            //Показать нехватку;
+            Animation animation = GameObject.Find("LightMana").GetComponent<Animation>();
+            animation.Play("Low");
+            return false;
+        }
+            
+        if (mc.Materia < SelfCard.SummonCost.Materia)
+        {
+            //Показать нехватку;
+            return false;
+        }
+        if (mc.Dark < SelfCard.SummonCost.Dark)
+        {
+            //Показать нехватку;
+            return false;
+        }
+
+        mc.Light -= SelfCard.SummonCost.Light;
+        mc.Materia -= SelfCard.SummonCost.Materia;
+        mc.Dark -= SelfCard.SummonCost.Dark;
+
+        player.Mana = mc;
+
+        SelfCard.State = CardState.IN_PLAY;
+
+        //Часть с активацией свойств при розыгрыше карты
+
+        return true;
 
     }
 }

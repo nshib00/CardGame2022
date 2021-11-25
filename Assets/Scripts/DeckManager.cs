@@ -35,6 +35,20 @@ public static class IListExtensions
     }
 }
 
+public struct ManaCost
+{
+    public int Light { get; set; }
+    public int Materia { get; set; }
+    public int Dark { get; set; }
+
+    public ManaCost(int lightMana, int materia, int darkMana)
+    {
+        Light = lightMana;
+        Materia = materia;
+        Dark = darkMana;
+    }
+}
+
 public class Card : ICloneable
 {
     public string Name { get; private set; }
@@ -42,21 +56,19 @@ public class Card : ICloneable
     public int Health { get; private set; }
     public int Damage { get; private set; }
     public Sprite Illustr { get; private set; }
-    public int LightCost { get; private set; }
-    public int DarkCost { get; private set; }
-    public int MateriaCost { get; private set; }
+    public ManaCost SummonCost { get; private set; }
+    public ManaCost VoidProfit { get; private set; }
     public CardState State { get; set; }
 
-    public Card(string name, string desc, int health, int damage, string illSRC, int lc, int dc, int mc)
+    public Card(string name, string desc, int health, int damage, string illSRC, ManaCost summonCost, ManaCost voidProfit)
     {
         Name = name;
         Desc = desc;
         Health = health;
         Damage = damage;
         Illustr = Resources.Load<Sprite>(illSRC);
-        LightCost = lc;
-        DarkCost = dc;
-        MateriaCost = mc;
+        SummonCost = summonCost;
+        VoidProfit = voidProfit;
         State = CardState.NOT_USED;
     }
 
@@ -125,6 +137,14 @@ public class DeckManager : MonoBehaviour , IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {        
         Player myPlayer = IPlayer.GetComponent<Player>();
+        ManaCost mc = myPlayer.Mana;
+        if (mc.Light == 0)
+        {
+            //Показать нехватку маны для дрова
+            return;
+        }
+        mc.Light--;
+        myPlayer.Mana = mc;
         myPlayer.DrawCard(GameDeck);
     }
 }

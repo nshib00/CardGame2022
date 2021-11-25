@@ -7,17 +7,30 @@ public class Enemy : MonoBehaviour
 {
     public Text Health;
     public Text Damage;
+    public Text EName;
+    public Text EDesc;
     public Image Face; 
 
 
     public int EnemyHealth { get; private set; }
     public int EnemyDamage { get; private set; }
+    public string EnemyName { get; private set; }
+    public string EnemyDescription { get; private set; }
 
-    public void SetEnemy(int health, int damage, string pict)
+    private int initHealth;
+
+    public void SetEnemy(int health, int damage, string pict, string name, string desc)
     {
         EnemyHealth = health;
         EnemyDamage = damage;
         Face.sprite = Resources.Load<Sprite>(pict);
+        EnemyName = name;
+        EnemyDescription = desc;
+        if (EName != null) EName.text = EnemyName;
+        if (EDesc != null) EDesc.text = EnemyDescription;
+        Face.material.SetFloat("Power", 0f);
+
+        initHealth = health;
     }
 
 
@@ -30,7 +43,18 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Health == null) return;
         if (Health != null) Health.text = EnemyHealth.ToString();
         if (Damage != null) Damage.text = EnemyDamage.ToString();
+        
+
+    }
+
+    public void HitEnemy()
+    {
+        EnemyHealth -= 5;
+        float clr = 1f - (float)EnemyHealth / (float)initHealth;
+        Debug.Log(clr);
+        Face.material.SetFloat("Power", clr);
     }
 }

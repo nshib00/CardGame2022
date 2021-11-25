@@ -70,8 +70,6 @@ public class CardMovement : MonoBehaviour , IBeginDragHandler, IEndDragHandler ,
 
     public void GoToVoid()
     {
-        Animator anim = gameObject.GetComponent<Animator>();
-        anim.SetBool("Void", true);
-        Destroy(gameObject, 0.95f);
+        
     }
 }
