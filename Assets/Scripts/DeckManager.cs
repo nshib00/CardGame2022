@@ -72,6 +72,14 @@ public class Card : ICloneable
         State = CardState.NOT_USED;
     }
 
+    public int DamageCard(int damage)
+    {
+        int ExcessiveDamage = damage - Health;
+        if (ExcessiveDamage >= 0) Health = 0;
+        else Health -= damage;
+        return ExcessiveDamage;
+    }
+
     public object Clone()
     {       
         return this.MemberwiseClone();       

@@ -9,6 +9,8 @@ public class Game : MonoBehaviour
     public GameObject IPlayer;
     public GameObject IDeck;
     public GameObject IEnemy;
+    public Image Army;
+    public Button EndTurnButton;
     private List<Card> AllCards;
     
     /// <summary>
@@ -37,6 +39,34 @@ public class Game : MonoBehaviour
         myDeck.FormDeck(AllCards);
         myPlayer.GetHand(5,myDeck);
         IEnemy.GetComponent<Enemy>().SetEnemy(40, 5, "Sprites/Cards/Boss_Destroyer", "Разрушитель миров", "Воплощение ярости");
+    }
+
+    public void EndPlayerTurn()
+    {
+        EndTurnButton.enabled = false;
+        Enemy enemy = IEnemy.GetComponent<Enemy>();
+        Player player = IPlayer.GetComponent<Player>();
+        EndTurnButton.GetComponentInChildren<Text>().text = "Армия атакует";
+        CardInfo[] PlayedCards = Army.GetComponentsInChildren<CardInfo>();            
+        for (int i = 0; i < PlayedCards.Length; i++)
+        {
+            
+            //Применение свойств до атаки
+            enemy.GetHit(PlayedCards[i].SelfCard.Damage);
+            //Применение свойств после атаки
+        }
+        if (enemy.EnemyHealth == 0)
+        {
+            //Празднуем победу
+        }
+        EndTurnButton.GetComponentInChildren<Text>().text = "Босс атакует";
+        enemy.Atack();
+        if (player.PlayerHealth == 0)
+        {
+            //Празднуем победу
+        }
+        EndTurnButton.GetComponentInChildren<Text>().text = "Закончить ход";
+        EndTurnButton.enabled = true;
 
     }
 }
