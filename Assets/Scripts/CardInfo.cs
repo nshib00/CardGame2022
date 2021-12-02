@@ -17,6 +17,11 @@ public class CardInfo : MonoBehaviour
 
     public Card SelfCard;
 
+    private void Update()
+    {
+        if (CardHealth != null) CardHealth.text = SelfCard.Health.ToString();
+    }
+
     private void ShowCost(string src , Image ParentImage)
     {
         GameObject NewObj = new GameObject(); 
@@ -101,5 +106,29 @@ public class CardInfo : MonoBehaviour
 
         return true;
 
+    }
+
+    public int GetHit(int hit)
+    {
+        int ExcessiveDamage = SelfCard.DamageCard(hit);
+        if (ExcessiveDamage >= 0)
+        {
+            SelfCard.State = CardState.DISCARDED;
+            Transform discard = GameObject.Find("DiscardPile").transform;
+            transform.GetComponent<RectTransform>().sizeDelta -= new Vector2(0.5f, 0.5f);
+            transform.SetParent(discard);            
+            StartCoroutine(MoveAtSpeedCoroutine(discard.position , 360.0f));
+        }
+        return ExcessiveDamage;
+    }
+
+    public IEnumerator MoveAtSpeedCoroutine(Vector3 end,  float speed)
+    {
+        while (Vector3.Distance(this.transform.position, end) > speed * Time.deltaTime)
+        {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, end, speed * Time.deltaTime);
+            yield return 0;
+        }
+        this.transform.position = end;
     }
 }
