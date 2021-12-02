@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     {
         Hand = new List<Card>();
         PlayerHealth = 20;
-        Mana = new ManaCost(1,1,1);
+        Mana = new ManaCost(10,10,10);
 
     }
 
@@ -35,10 +35,10 @@ public class Player : MonoBehaviour
         CardToHand.GetComponent<CardInfo>().FillCardInfo(drawnCard);
     }
 
-    public bool AttackPlayer(int damage)
+    public void AttackPlayer(int damage)
     {
         PlayerHealth -= damage;
-        return (PlayerHealth > 0);
+        if (PlayerHealth < 0) PlayerHealth = 0;
     }
 
 }
