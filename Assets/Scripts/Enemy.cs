@@ -9,7 +9,8 @@ public class Enemy : MonoBehaviour
     public Text Damage;
     public Text EName;
     public Text EDesc;
-    public Image Face; 
+    public Image Face;
+    public Image Army;
 
 
     public int EnemyHealth { get; private set; }
@@ -50,9 +51,25 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void HitEnemy()
+    public void Atack()
     {
-        EnemyHealth -= 5;
+        //Примененние свойств до атаки
+        CardInfo[] PlayedCards = Army.GetComponentsInChildren<CardInfo>();
+        int AttackValue = EnemyDamage;
+        for (int i = 0; i < PlayedCards.Length; i++)
+        {
+            AttackValue = PlayedCards[i].GetHit(AttackValue);
+            if (AttackValue <= 0) break;
+        }
+        //Примененние свойств после атаки
+        if (AttackValue > 0) GameObject.Find("Player").GetComponent<Player>().AttackPlayer(AttackValue);
+    }
+
+    public void GetHit(int hit)
+    {
+        EnemyHealth -= hit;
+        if (EnemyHealth < 0)        
+            EnemyHealth = 0;           
         float clr = 1f - (float)EnemyHealth / (float)initHealth;
         Debug.Log(clr);
         Face.material.SetFloat("Power", clr);
