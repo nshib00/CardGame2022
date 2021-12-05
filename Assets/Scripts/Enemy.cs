@@ -51,27 +51,13 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void Atack()
-    {
-        //Примененние свойств до атаки
-        CardInfo[] PlayedCards = Army.GetComponentsInChildren<CardInfo>();
-        int AttackValue = EnemyDamage;
-        for (int i = 0; i < PlayedCards.Length; i++)
-        {
-            AttackValue = PlayedCards[i].GetHit(AttackValue);
-            if (AttackValue <= 0) break;
-        }
-        //Примененние свойств после атаки
-        if (AttackValue > 0) GameObject.Find("Player").GetComponent<Player>().AttackPlayer(AttackValue);
-    }
-
     public void GetHit(int hit)
-    {
+    {        
         EnemyHealth -= hit;
         if (EnemyHealth < 0)        
             EnemyHealth = 0;           
         float clr = 1f - (float)EnemyHealth / (float)initHealth;
-        Debug.Log(clr);
         Face.material.SetFloat("Power", clr);
     }
+    
 }

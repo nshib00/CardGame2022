@@ -3,7 +3,14 @@ guid: e76731e5e36c58a4c982ce18318c2020
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - IPlayer: {instanceID: 0}
+  - IDeck: {instanceID: 0}
+  - IEnemy: {instanceID: 0}
+  - Army: {instanceID: 0}
+  - EndTurnButton: {instanceID: 0}
+  - ScratchPrefab: {fileID: 3857900240364654510, guid: a753e2faee124dd458f5c08a202936a9,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

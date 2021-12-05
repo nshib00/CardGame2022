@@ -11,7 +11,10 @@ public class Game : MonoBehaviour
     public GameObject IEnemy;
     public Image Army;
     public Button EndTurnButton;
+    public GameObject ScratchPrefab;
+    
     private List<Card> AllCards;
+    private bool endTurn = false;
     
     /// <summary>
     /// Функция создания галереи всех доступных карт
@@ -43,16 +46,24 @@ public class Game : MonoBehaviour
 
     public void EndPlayerTurn()
     {
+        endTurn = false;
+        StartCoroutine(RoundEnd());
+    }
+
+    private IEnumerator RoundEnd()
+    {
+        Cursor.visible = false;
         EndTurnButton.enabled = false;
         Enemy enemy = IEnemy.GetComponent<Enemy>();
         Player player = IPlayer.GetComponent<Player>();
-        EndTurnButton.GetComponentInChildren<Text>().text = "Армия атакует";
-        CardInfo[] PlayedCards = Army.GetComponentsInChildren<CardInfo>();            
-        for (int i = 0; i < PlayedCards.Length; i++)
-        {
-            
+        EndTurnButton.GetComponentInChildren<Text>().text = "Армия атакует";        
+        
+        for (int i = 0; i < Army.transform.childCount; i++)
+        {            
             //Применение свойств до атаки
-            enemy.GetHit(PlayedCards[i].SelfCard.Damage);
+            GameObject Attacker = Army.transform.GetChild(i).gameObject;
+            yield return StartCoroutine(SpawnHit(Attacker.transform.position,IEnemy.transform.position));            
+            enemy.GetHit(Attacker.GetComponent<CardInfo>().SelfCard.Damage);            
             //Применение свойств после атаки
         }
         if (enemy.EnemyHealth == 0)
@@ -60,13 +71,53 @@ public class Game : MonoBehaviour
             //Празднуем победу
         }
         EndTurnButton.GetComponentInChildren<Text>().text = "Босс атакует";
-        enemy.Atack();
+        
+        //Примененние свойств до атаки (Общее)        
+        int AttackValue = enemy.EnemyDamage;
+        int armyCount = Army.transform.childCount;
+        for (int i = 0; i < armyCount; i++)
+        {
+            //Применение свойств до атаки
+            GameObject Attacker = Army.transform.GetChild(0).gameObject;
+            yield return StartCoroutine(SpawnHit(IEnemy.transform.position, Attacker.transform.position));
+            AttackValue = Attacker.GetComponent<CardInfo>().GetHit(AttackValue);  
+            if (AttackValue <= 0) break;
+            //Применение свойств после атаки
+
+        }
+        //Примененние свойств после атаки (Общее) 
+        if (AttackValue > 0) player.AttackPlayer(AttackValue);
+        yield return new WaitForSeconds(2);
         if (player.PlayerHealth == 0)
         {
-            //Празднуем победу
+            //Горечь поражения
         }
         EndTurnButton.GetComponentInChildren<Text>().text = "Закончить ход";
         EndTurnButton.enabled = true;
 
+        Cursor.visible = true;
+
+    }
+
+    private IEnumerator SpawnHit(Vector3 spawn, Vector3 target)
+    {
+        GameObject mainCanvas = GameObject.Find("Canvas");
+        spawn = new Vector3(spawn.x, spawn.y, 91);
+        target = new Vector3(target.x, target.y, 91);
+        GameObject AttackScratch = Instantiate(ScratchPrefab, spawn, Quaternion.identity, mainCanvas.transform);         
+        yield return StartCoroutine(MoveAtSpeedCoroutine(AttackScratch, target, 10));
+    }
+
+
+    private IEnumerator MoveAtSpeedCoroutine(GameObject s, Vector3 end, float speed)
+    {
+        while (Vector3.Distance(s.transform.position, end) > speed * Time.deltaTime)
+        {
+            Debug.Log("Префаб  в позиции" + s.transform.position);
+            s.transform.position = Vector3.MoveTowards(s.transform.position, end, speed * Time.deltaTime);
+            yield return null;
+        }
+        s.transform.position = end;
+        Destroy(s);
     }
 }

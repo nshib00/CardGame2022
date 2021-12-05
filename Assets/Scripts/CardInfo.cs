@@ -75,25 +75,25 @@ public class CardInfo : MonoBehaviour
     {
         Player player = GameObject.Find("Player").GetComponent<Player>();
         ManaCost mc = player.Mana;
+        bool lowMana = false;
         if (mc.Light < SelfCard.SummonCost.Light)
-        {
-            //Показать нехватку;
+        {            
             Animation animation = GameObject.Find("LightMana").GetComponent<Animation>();
             animation.Play("Low");
-            return false;
-        }
-            
+            lowMana = true;
+        }            
         if (mc.Materia < SelfCard.SummonCost.Materia)
-        {
-            //Показать нехватку;
-            return false;
+        {            
+            Animation animation = GameObject.Find("Materia").GetComponent<Animation>();
+            animation.Play("LowMateria");
+            lowMana = true;
         }
         if (mc.Dark < SelfCard.SummonCost.Dark)
         {
             //Показать нехватку;
-            return false;
+            lowMana = true;
         }
-
+        if (lowMana) return false;
         mc.Light -= SelfCard.SummonCost.Light;
         mc.Materia -= SelfCard.SummonCost.Materia;
         mc.Dark -= SelfCard.SummonCost.Dark;
@@ -117,7 +117,7 @@ public class CardInfo : MonoBehaviour
             Transform discard = GameObject.Find("DiscardPile").transform;
             transform.GetComponent<RectTransform>().sizeDelta -= new Vector2(0.5f, 0.5f);
             transform.SetParent(discard);            
-            StartCoroutine(MoveAtSpeedCoroutine(discard.position , 360.0f));
+            StartCoroutine(MoveAtSpeedCoroutine(discard.position , 12.0f));
         }
         return ExcessiveDamage;
     }
