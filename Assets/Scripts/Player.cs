@@ -11,12 +11,11 @@ public class Player : MonoBehaviour
     public int PlayerHealth { get; private set; }
     public ManaCost Mana { get; set; }
 
-    public void Awake()
+    public void SetPlayer(int SetHealth, int SetLight, int SetMateria, int SetDark)
     {
         Hand = new List<Card>();
-        PlayerHealth = 20;
-        Mana = new ManaCost(10,10,10);
-
+        PlayerHealth = SetHealth;
+        Mana = new ManaCost(SetLight, SetMateria, SetDark);
     }
 
     public void GetHand(int n , Deck deck)

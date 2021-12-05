@@ -99,7 +99,7 @@ public class Deck
     public void FormDeck(List<Card> AllCards)
     {
         //Здесь формирование колоды должно быть
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 20; i++)
             AddCard((Card)AllCards[UnityEngine.Random.Range(0, AllCards.Count)].Clone());  
         //Шафлим
         ShuffleDeck();
@@ -114,7 +114,12 @@ public class Deck
 
     public Card TopDeck()
     {
-        if (DeckSize == 0) return null;
+        if (DeckSize == 0)
+        {
+            //Тоже проигрыш
+            return null;
+        }
+            
         Card topdeck = Cards[0];
         Cards.RemoveAt(0);
         return topdeck;

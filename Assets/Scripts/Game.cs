@@ -12,19 +12,28 @@ public class Game : MonoBehaviour
     public Image Army;
     public Button EndTurnButton;
     public GameObject ScratchPrefab;
-    
+    public GameObject WallSpawn;
+    public GameObject CardPrefab;
+
     private List<Card> AllCards;
     private bool endTurn = false;
+    private Card WallCard;
     
     /// <summary>
     /// Функция создания галереи всех доступных карт
     /// </summary>
     private void LoadCardGallery()
     {
-        AllCards.Add(new Card("Чемпион", "Несущая свет", 5, 4, "Sprites/Cards/Champ", new ManaCost(2, 2, 0) , new ManaCost (2,1,0)));
+        //Загрузка колоды
+        AllCards.Add(new Card("Чемпион", "Несущая свет", 4, 3, "Sprites/Cards/Champ", new ManaCost(2, 2, 0) , new ManaCost (2,1,0)));
         AllCards.Add(new Card("Белый Дракон", "Дыхание Бога", 7, 2, "Sprites/Cards/WDrag", new ManaCost(4, 3, 0) , new ManaCost(3, 0, 0)));
-        AllCards.Add(new Card("Имп", "Жар преисподней", 2, 3, "Sprites/Cards/Imp", new ManaCost(0, 1, 1) , new ManaCost(0, 0, 2)));
-        AllCards.Add(new Card("Маг", "Жаждущий знаний", 1, 5, "Sprites/Cards/Mage", new ManaCost(1, 2, 1) , new ManaCost(0, 3, 0)));
+        AllCards.Add(new Card("Имп", "Жар преисподней", 2, 3, "Sprites/Cards/Imp", new ManaCost(0, 1, 2) , new ManaCost(0, 0, 3)));
+        AllCards.Add(new Card("Маг", "Жаждущий знаний", 2, 5, "Sprites/Cards/Mage", new ManaCost(1, 2, 1) , new ManaCost(0, 3, 0)));
+        AllCards.Add(new Card("Чертёнок", "Малое зло", 1, 1, "Sprites/Cards/LittleHorn", new ManaCost(0, 0, 1), new ManaCost(0, 0, 2)));
+        AllCards.Add(new Card("Королева бездны", "Меч тьмы", 3, 6, "Sprites/Cards/PitLord", new ManaCost(1, 1, 5), new ManaCost(0, 1, 2)));
+        AllCards.Add(new Card("Снежная стая", "Вихрь стрел и клыков", 2, 2, "Sprites/Cards/SnowPack", new ManaCost(1, 1, 1), new ManaCost(1, 1, 1)));
+        //Особая карта Стенки
+        WallCard = new Card("Стена", "На грани миров", 2, 0, "Sprites/Cards/Wall", new ManaCost(0, 1, 0), new ManaCost(0, 0, 0));
     }
 
     // Start is called before the first frame update
@@ -40,7 +49,10 @@ public class Game : MonoBehaviour
         Deck myDeck = IDeck.GetComponent<DeckManager>().GameDeck;
         Player myPlayer = IPlayer.GetComponent<Player>();
         myDeck.FormDeck(AllCards);
-        myPlayer.GetHand(5,myDeck);
+        myPlayer.SetPlayer(20, 1, 1, 1);
+        myPlayer.GetHand(5, myDeck);
+        GameObject Wall = Instantiate(CardPrefab, WallSpawn.transform, false);
+        Wall.GetComponent<CardInfo>().FillCardInfo((Card)WallCard.Clone());
         IEnemy.GetComponent<Enemy>().SetEnemy(40, 5, "Sprites/Cards/Boss_Destroyer", "Разрушитель миров", "Воплощение ярости");
     }
 
@@ -80,10 +92,15 @@ public class Game : MonoBehaviour
             //Применение свойств до атаки
             GameObject Attacker = Army.transform.GetChild(0).gameObject;
             yield return StartCoroutine(SpawnHit(IEnemy.transform.position, Attacker.transform.position));
-            AttackValue = Attacker.GetComponent<CardInfo>().GetHit(AttackValue);  
-            if (AttackValue <= 0) break;
+            AttackValue = Attacker.GetComponent<CardInfo>().GetHit(AttackValue);
+            if (Attacker.GetComponent<CardInfo>().SelfCard.State == CardState.DISCARDED)
+            {
+                Transform discard = GameObject.Find("DiscardPile").transform;
+                yield return StartCoroutine(MoveAtSpeedCoroutine(Attacker, discard.position, 15.0f));
+                Attacker.transform.SetParent(discard);
+            }
             //Применение свойств после атаки
-
+            if (AttackValue <= 0) break;      
         }
         //Примененние свойств после атаки (Общее) 
         if (AttackValue > 0) player.AttackPlayer(AttackValue);
@@ -92,6 +109,18 @@ public class Game : MonoBehaviour
         {
             //Горечь поражения
         }
+
+        //Подготовка к новому раунду
+        EndTurnButton.GetComponentInChildren<Text>().text = "Фаза ресурсов";
+        //Тут должны быть броски кубиков для опрделения притока ресурсов
+        ManaCost mana = player.Mana;
+        mana.Materia++;
+        mana.Light++;
+        mana.Dark++;
+        player.Mana = mana;
+        //Добрать 1 карту
+        player.DrawCard(IDeck.GetComponent<DeckManager>().GameDeck);
+
         EndTurnButton.GetComponentInChildren<Text>().text = "Закончить ход";
         EndTurnButton.enabled = true;
 
@@ -106,6 +135,7 @@ public class Game : MonoBehaviour
         target = new Vector3(target.x, target.y, 91);
         GameObject AttackScratch = Instantiate(ScratchPrefab, spawn, Quaternion.identity, mainCanvas.transform);         
         yield return StartCoroutine(MoveAtSpeedCoroutine(AttackScratch, target, 10));
+        Destroy(AttackScratch);
     }
 
 
@@ -113,11 +143,9 @@ public class Game : MonoBehaviour
     {
         while (Vector3.Distance(s.transform.position, end) > speed * Time.deltaTime)
         {
-            Debug.Log("Префаб  в позиции" + s.transform.position);
             s.transform.position = Vector3.MoveTowards(s.transform.position, end, speed * Time.deltaTime);
             yield return null;
         }
         s.transform.position = end;
-        Destroy(s);
     }
 }

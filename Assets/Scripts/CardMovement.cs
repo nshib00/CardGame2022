@@ -38,7 +38,6 @@ public class CardMovement : MonoBehaviour , IBeginDragHandler, IEndDragHandler ,
     {
         if (cardState != CardState.IN_HAND) return;
         CardPosition = mainCamera.ScreenToWorldPoint(eventData.position) + offset;
-        CardPosition.z = 0;
         Debug.Log(CardPosition);
         transform.position = CardPosition; //CardPosition;
         

@@ -112,13 +112,7 @@ public class CardInfo : MonoBehaviour
     {
         int ExcessiveDamage = SelfCard.DamageCard(hit);
         if (ExcessiveDamage >= 0)
-        {
-            SelfCard.State = CardState.DISCARDED;
-            Transform discard = GameObject.Find("DiscardPile").transform;
-            transform.GetComponent<RectTransform>().sizeDelta -= new Vector2(0.5f, 0.5f);
-            transform.SetParent(discard);            
-            StartCoroutine(MoveAtSpeedCoroutine(discard.position , 12.0f));
-        }
+            SelfCard.State = CardState.DISCARDED;        
         return ExcessiveDamage;
     }
 
