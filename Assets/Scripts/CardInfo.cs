@@ -54,7 +54,11 @@ public class CardInfo : MonoBehaviour
     public bool BanishToVoid()
     {
         Player player = GameObject.Find("Player").GetComponent<Player>();
-        if (player.Mana.Dark == 0) return false;
+        if (player.Mana.Dark == 0)
+        {
+            //Показать нехватку;
+            return false;
+        }
         SelfCard.State = CardState.BANISHED;
         ManaCost mc = player.Mana;
         mc.Dark--;
@@ -116,13 +120,4 @@ public class CardInfo : MonoBehaviour
         return ExcessiveDamage;
     }
 
-    public IEnumerator MoveAtSpeedCoroutine(Vector3 end,  float speed)
-    {
-        while (Vector3.Distance(this.transform.position, end) > speed * Time.deltaTime)
-        {
-            this.transform.position = Vector3.MoveTowards(this.transform.position, end, speed * Time.deltaTime);
-            yield return 0;
-        }
-        this.transform.position = end;
-    }
 }

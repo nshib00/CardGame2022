@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
@@ -16,7 +15,6 @@ public class Game : MonoBehaviour
     public GameObject CardPrefab;
 
     private List<Card> AllCards;
-    private bool endTurn = false;
     private Card WallCard;
     
     /// <summary>
@@ -58,10 +56,10 @@ public class Game : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        endTurn = false;
         StartCoroutine(RoundEnd());
     }
 
+    //корутина конца хода игрока: боевка, атака босса и подготовка к следующему раунду
     private IEnumerator RoundEnd()
     {
         Cursor.visible = false;
@@ -113,11 +111,8 @@ public class Game : MonoBehaviour
         //Подготовка к новому раунду
         EndTurnButton.GetComponentInChildren<Text>().text = "Фаза ресурсов";
         //Тут должны быть броски кубиков для опрделения притока ресурсов
-        ManaCost mana = player.Mana;
-        mana.Materia++;
-        mana.Light++;
-        mana.Dark++;
-        player.Mana = mana;
+        //Пока по 1 всего
+        player.AddMana(1, 1, 1);
         //Добрать 1 карту
         player.DrawCard(IDeck.GetComponent<DeckManager>().GameDeck);
 
@@ -128,6 +123,7 @@ public class Game : MonoBehaviour
 
     }
 
+    //Корутина спавна удара
     private IEnumerator SpawnHit(Vector3 spawn, Vector3 target)
     {
         GameObject mainCanvas = GameObject.Find("Canvas");
@@ -138,7 +134,7 @@ public class Game : MonoBehaviour
         Destroy(AttackScratch);
     }
 
-
+    //Корутина движения объекта
     private IEnumerator MoveAtSpeedCoroutine(GameObject s, Vector3 end, float speed)
     {
         while (Vector3.Distance(s.transform.position, end) > speed * Time.deltaTime)

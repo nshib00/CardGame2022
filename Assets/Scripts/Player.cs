@@ -27,7 +27,11 @@ public class Player : MonoBehaviour
     public void DrawCard(Deck deck)
     {
         Card drawnCard = deck.TopDeck();
-        if (drawnCard == null) return;
+        if (drawnCard == null)
+        {
+            //Тут тоже проигрыш
+            return;
+        }
         drawnCard.State = CardState.IN_HAND;
         Hand.Add(drawnCard);
         GameObject CardToHand = Instantiate(CardPrefab, PlayerArea.transform, false);
@@ -38,6 +42,15 @@ public class Player : MonoBehaviour
     {
         PlayerHealth -= damage;
         if (PlayerHealth < 0) PlayerHealth = 0;
+    }
+
+    public void AddMana(int addedLight, int addedMateria, int addedDark)
+    {
+        ManaCost mana = Mana;
+        mana.Materia += addedLight;
+        mana.Light += addedMateria;
+        mana.Dark += addedDark;
+        Mana = mana;
     }
 
 }
