@@ -22,6 +22,7 @@ public class CardInfo : MonoBehaviour
         if (CardHealth != null) CardHealth.text = SelfCard.Health.ToString();
     }
 
+    //Динамическое добавление иконки маны на карту
     private void ShowCost(string src , Image ParentImage)
     {
         GameObject NewObj = new GameObject(); 
@@ -54,11 +55,9 @@ public class CardInfo : MonoBehaviour
     public bool BanishToVoid()
     {
         Player player = GameObject.Find("Player").GetComponent<Player>();
-        if (player.Mana.Dark == 0)
-        {
-            //Показать нехватку;
-            return false;
-        }
+        
+
+
         SelfCard.State = CardState.BANISHED;
         ManaCost mc = player.Mana;
         mc.Dark--;
@@ -98,7 +97,7 @@ public class CardInfo : MonoBehaviour
             lowMana = true;
         }
         if (lowMana) return false;
-        mc.Light -= SelfCard.SummonCost.Light;
+        mc.Light += SelfCard.SummonCost.Light;
         mc.Materia -= SelfCard.SummonCost.Materia;
         mc.Dark -= SelfCard.SummonCost.Dark;
 
@@ -116,7 +115,7 @@ public class CardInfo : MonoBehaviour
     {
         int ExcessiveDamage = SelfCard.DamageCard(hit);
         if (ExcessiveDamage >= 0)
-            SelfCard.State = CardState.DISCARDED;        
+            SelfCard.State = CardState.BANISHED;        
         return ExcessiveDamage;
     }
 

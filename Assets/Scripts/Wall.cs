@@ -18,5 +18,6 @@ public class Wall : MonoBehaviour
         else return;
         GameObject NewWall = Instantiate(CardPrefab, transform, false);
         NewWall.GetComponent<CardInfo>().FillCardInfo((Card)(CurrentWall.GetComponent<CardInfo>().SelfCard.Clone()));
+        NewWall.GetComponent<CardInfo>().SelfCard.State = CardState.WALL;
     }
 }
