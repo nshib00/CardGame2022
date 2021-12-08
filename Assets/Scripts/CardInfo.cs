@@ -115,7 +115,7 @@ public class CardInfo : MonoBehaviour
     {
         int ExcessiveDamage = SelfCard.DamageCard(hit);
         if (ExcessiveDamage >= 0)
-            SelfCard.State = CardState.BANISHED;        
+            SelfCard.State = CardState.DISCARDED;        
         return ExcessiveDamage;
     }
 
