@@ -31,7 +31,7 @@ public class Game : MonoBehaviour
         AllCards.Add(new Card("Королева бездны", "Меч тьмы", 3, 6, "Sprites/Cards/PitLord", new ManaCost(1, 1, 5), new ManaCost(0, 1, 2)));
         AllCards.Add(new Card("Снежная стая", "Вихрь стрел и клыков", 2, 2, "Sprites/Cards/SnowPack", new ManaCost(1, 1, 1), new ManaCost(1, 1, 1)));
         //Особая карта Стенки
-        WallCard = new Card("Стена", "На грани миров", 2, 0, "Spprites/Cards/Wall", new ManaCost(0, 1, 0), new ManaCost(0, 0, 0));
+        WallCard = new Card("Стена", "На грани миров", 2, 0, "Sprites/Cards/Wall", new ManaCost(0, 1, 0), new ManaCost(0, 0, 0));
     }
 
     // Start is called before the first frame update
@@ -88,7 +88,7 @@ public class Game : MonoBehaviour
         for (int i = 0; i < armyCount; i++)
         {
             //Применение свойств до атаки
-            GameObject Attacker = Army.transform.GetChild(i).gameObject;
+            GameObject Attacker = Army.transform.GetChild(0).gameObject;
             yield return StartCoroutine(SpawnHit(IEnemy.transform.position, Attacker.transform.position));
             AttackValue = Attacker.GetComponent<CardInfo>().GetHit(AttackValue);
             if (Attacker.GetComponent<CardInfo>().SelfCard.State == CardState.DISCARDED)
