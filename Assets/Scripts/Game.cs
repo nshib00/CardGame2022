@@ -69,14 +69,18 @@ public class Game : MonoBehaviour
         Player player = IPlayer.GetComponent<Player>();
         EndTurnButton.GetComponentInChildren<Text>().text = "Армия атакует";        
         
-        for (int i = 0; i < Army.transform.childCount; i++)
-        {            
-            //Применение свойств до атаки
-            GameObject Attacker = Army.transform.GetChild(i).gameObject;
-            yield return StartCoroutine(SpawnHit(Attacker.transform.position, IEnemy.transform.position));            
-            enemy.GetHit(Attacker.GetComponent<CardInfo>().SelfCard.Damage);            
-            //Применение свойств после атаки
-        }
+            for (int i = 0; i < Army.transform.childCount; i++)
+            {     
+                //Применение свойств до атаки
+                GameObject Attacker = Army.transform.GetChild(i).gameObject;
+                enemy.GetHit(Attacker.GetComponent<CardInfo>().SelfCard.Damage);            
+                if(Attacker.SelfCard.Damage > 0)
+                {
+                    yield return StartCoroutine(SpawnHit(Attacker.transform.position, IEnemy.transform.position));
+                }
+                //Применение свойств после атаки
+            }
+
         if (enemy.EnemyHealth == 0)
         {
             //Празднуем победу
