@@ -156,7 +156,7 @@ public class Game : MonoBehaviour
 
     public void GameVictory()
     {
-        Debug.Log("fddsh");
+        Debug.Log("Victory");
         win_label.gameObject.SetActive(true);
         Enemy enemy = IEnemy.GetComponent<Enemy>();
         win_label.text = "Поздравляем! " + enemy.name + " повержен";
