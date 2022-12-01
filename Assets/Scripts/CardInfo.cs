@@ -91,7 +91,8 @@ public class CardInfo : MonoBehaviour
         }
         if (mc.Dark < SelfCard.SummonCost.Dark)
         {
-            //Показать нехватку;
+            Animation animation = GameObject.Find("DarkMana").GetComponent<Animation>();//ищем аниматор
+            animation.Play("LowDark");//включена анимация недостатка темной маны 
             lowMana = true;
         }
         if (lowMana) return false;
