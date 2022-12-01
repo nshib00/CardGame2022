@@ -14,6 +14,8 @@ public class Game : MonoBehaviour
     public GameObject ScratchPrefab;
     public GameObject WallSpawn;
     public GameObject CardPrefab;
+    public Text win_label;
+    public Button resetGame;
 
     private List<Card> AllCards;
     private Card WallCard;
@@ -83,7 +85,7 @@ public class Game : MonoBehaviour
 
         if (enemy.EnemyHealth == 0)
         {
-            //Празднуем победу
+            GameVictory();
         }
         EndTurnButton.GetComponentInChildren<Text>().text = "Босс атакует";
         
@@ -154,5 +156,14 @@ public class Game : MonoBehaviour
     public void ReloadGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void GameVictory()
+    {
+        Debug.Log("Victory");
+        win_label.gameObject.SetActive(true);
+        Enemy enemy = IEnemy.GetComponent<Enemy>();
+        win_label.text = "Поздравляем! " + enemy.name + " повержен";
+        resetGame.gameObject.SetActive(true);
     }
 }
