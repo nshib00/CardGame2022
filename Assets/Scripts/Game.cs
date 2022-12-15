@@ -27,6 +27,11 @@ public class Game : MonoBehaviour
     {
         //Загрузка колоды
         AllCards.Add(new Card("Чемпион", "Несущая свет", 4, 3, "Sprites/Cards/Champ", new ManaCost(2, 2, 0) , new ManaCost (2,1,0)));
+
+        AllCards.Add(new Card("Гений мысли", "Глаз правосудия", 8, 17, "Sprites/Cards/Scala", new ManaCost(6, 8, 7), new ManaCost(6, 7, 7)));
+        AllCards.Add(new Card("Резняк", "Собаколюб", 2, 3, "Sprites/Cards/Johnkick", new ManaCost(1, 2, 1), new ManaCost(1, 1, 1)));
+        AllCards.Add(new Card("Керальд", "Проиграл квартиру в гвинт", 1, 7, "Sprites/Cards/geralt", new ManaCost(1, 1, 1), new ManaCost(1, 0, 1)));
+
         AllCards.Add(new Card("Белый Дракон", "Дыхание Бога", 7, 2, "Sprites/Cards/WDrag", new ManaCost(4, 3, 0) , new ManaCost(3, 0, 0)));
         AllCards.Add(new Card("Имп", "Жар преисподней", 2, 3, "Sprites/Cards/Imp", new ManaCost(0, 1, 2) , new ManaCost(0, 0, 3)));
         AllCards.Add(new Card("Маг", "Жаждущий знаний", 2, 5, "Sprites/Cards/Mage", new ManaCost(1, 2, 1) , new ManaCost(0, 3, 0)));
